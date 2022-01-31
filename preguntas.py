@@ -56,7 +56,7 @@ def pregunta_03():
 
     """
     df = pd.DataFrame(tbl0)
-    return df.sort_values(by="_c1")["_c1"].value_counts(sort=False)
+    return df["_c1"].value_counts().sort_index(0)
 #print(pregunta_03())
 
 def pregunta_04():
@@ -72,7 +72,7 @@ def pregunta_04():
     Name: _c2, dtype: float64
     """
     df = pd.DataFrame(tbl0)
-    return df.sort_values(by="_c1")[["_c1","_c2"] ].groupby(by="_c1").mean()
+    return df.sort_values(by="_c1").groupby(by="_c1")["_c2"].mean()
 #print(pregunta_04())
 
 def pregunta_05():
@@ -90,7 +90,7 @@ def pregunta_05():
     Name: _c2, dtype: int64
     """
     df = pd.DataFrame(tbl0)
-    return df.sort_values(by="_c1")[["_c1","_c2"] ].groupby(by="_c1").max()
+    return df.sort_values(by="_c1").groupby(by="_c1")["_c2"].max()
 #print(pregunta_05())
 
 def pregunta_06():
@@ -178,18 +178,22 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
+    #df = pd.DataFrame(tbl0)
+    #letters = sorted(df["_c1"].unique())
+    #result = []
+    #diccionario = {}
+    #for letter in letters:
+    #    array = list(df.groupby("_c1").get_group(letter)["_c2"])
+    #    array.sort()
+    #    result.append(":".join([f"{x}" for x in array]).strip())
+    #diccionario["_c0"] = letters
+    #diccionario['_c1'] = result
+    #df = pd.DataFrame(diccionario)
     df = pd.DataFrame(tbl0)
-    letters = sorted(df["_c1"].unique())
-    result = []
-    diccionario = {}
-    for letter in letters:
-        array = list(df.groupby("_c1").get_group(letter)["_c2"])
-        array.sort()
-        result.append(":".join([f"{x}" for x in array]).strip())
-    diccionario["_c0"] = letters
-    diccionario['_c1'] = result
-    df = pd.DataFrame(diccionario)
-    return df
+    grouped = df.groupby("_c1").agg({"_c2":lambda x:sorted(list(x))})
+    for i, value in grouped.iterrows():
+        value["_c2"] = ":".join([f"{x}" for x in value["_c2"]])
+    return grouped
 #print(pregunta_10())
 
 def pregunta_11():
@@ -273,5 +277,5 @@ def pregunta_13():
     df2 = pd.DataFrame(tbl2)
     df = pd.merge(df1, df2, on="_c0")
     
-    return df[["_c1","_c5b"]].groupby('_c1').sum()
+    return df.groupby('_c1')["_c5b"].sum()
 #print(pregunta_13())
