@@ -120,7 +120,7 @@ def pregunta_07():
     Name: _c2, dtype: int64
     """
     df = pd.DataFrame(tbl0)
-    return df.sort_values(by="_c1")[["_c1","_c2"]].groupby(by="_c1").sum()
+    return df.sort_values(by="_c1").groupby(by="_c1")["_c2"].sum()
 #print(pregunta_07())
 
 def pregunta_08():
