@@ -274,4 +274,4 @@ def pregunta_13():
     df = pd.merge(df1, df2, on="_c0")
     
     return df[["_c1","_c5b"]].groupby('_c1').sum()
-print(pregunta_13())
+#print(pregunta_13())
