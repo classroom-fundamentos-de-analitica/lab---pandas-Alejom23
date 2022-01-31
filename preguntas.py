@@ -22,8 +22,11 @@ def pregunta_01():
     40
 
     """
-    return
+    df = pd.DataFrame(tbl0)
 
+    return len(df.index)
+
+#print(pregunta_01())
 
 def pregunta_02():
     """
@@ -33,8 +36,10 @@ def pregunta_02():
     4
 
     """
-    return
+    df = pd.DataFrame(tbl0)
 
+    return len(df.columns)
+#print(pregunta_02())
 
 def pregunta_03():
     """
@@ -50,8 +55,9 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
-
+    df = pd.DataFrame(tbl0)
+    return df.sort_values(by="_c1")["_c1"].value_counts(sort=False)
+#print(pregunta_03())
 
 def pregunta_04():
     """
@@ -65,8 +71,9 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
-
+    df = pd.DataFrame(tbl0)
+    return df.sort_values(by="_c1")[["_c1","_c2"] ].groupby(by="_c1").mean()
+#print(pregunta_04())
 
 def pregunta_05():
     """
@@ -82,8 +89,9 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
-
+    df = pd.DataFrame(tbl0)
+    return df.sort_values(by="_c1")[["_c1","_c2"] ].groupby(by="_c1").max()
+#print(pregunta_05())
 
 def pregunta_06():
     """
@@ -94,8 +102,9 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
-
+    df = pd.DataFrame(tbl1)
+    return sorted([x.upper() for x in (df['_c4']).unique()])
+#print(pregunta_06())
 
 def pregunta_07():
     """
@@ -110,8 +119,9 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
-
+    df = pd.DataFrame(tbl0)
+    return df.sort_values(by="_c1")[["_c1","_c2"]].groupby(by="_c1").sum()
+#print(pregunta_07())
 
 def pregunta_08():
     """
@@ -128,9 +138,12 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    df = pd.DataFrame(tbl0)
+    sum_column = df["_c0"] + df["_c2"]
+    df["suma"] = sum_column
+    return df
 
-
+#print(pregunta_08())
 def pregunta_09():
     """
     Agregue el año como una columna al archivo `tbl0.tsv`.
@@ -146,9 +159,11 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    df = pd.DataFrame(tbl0)
+    df["year"] = df['_c3'].str[:4]
+    return df
 
-
+#print(pregunta_09())
 def pregunta_10():
     """
     Construya una tabla que contenga _c1 y una lista separada por ':' de los valores de
@@ -163,8 +178,19 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
-
+    df = pd.DataFrame(tbl0)
+    letters = sorted(df["_c1"].unique())
+    result = []
+    diccionario = {}
+    for letter in letters:
+        array = list(df.groupby("_c1").get_group(letter)["_c2"])
+        array.sort()
+        result.append(":".join([f"{x}" for x in array]).strip())
+    diccionario["_c0"] = letters
+    diccionario['_c1'] = result
+    df = pd.DataFrame(diccionario)
+    return df
+#print(pregunta_10())
 
 def pregunta_11():
     """
@@ -182,7 +208,19 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    df = pd.DataFrame(tbl1)
+    letters = sorted(df["_c0"].unique())
+    result = []
+    diccionario = {}
+    for letter in letters:
+        array = list(df.groupby("_c0").get_group(letter)["_c4"])
+        array.sort()
+        result.append(",".join([f"{x}" for x in array]).strip())
+    diccionario["_c0"] = letters
+    diccionario['_c4'] = result
+    df = pd.DataFrame(diccionario)
+    return df
+#print(pregunta_11())
 
 
 def pregunta_12():
@@ -200,8 +238,22 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
-
+    df = pd.DataFrame(tbl2)
+    print(df)
+    letters = sorted(df["_c0"].unique())
+    result = []
+    diccionario = {}
+    df["_c5"] = df["_c5a"] + ":" + df["_c5b"].astype(str)
+    for letter in letters:
+        array = list(df.groupby("_c0").get_group(letter)["_c5"])
+        array.sort()
+        result.append(",".join([f"{x}" for x in array]).strip())
+    diccionario["_c0"] = letters
+    diccionario['_c5'] = result
+    df = pd.DataFrame(diccionario)
+    #print(df)
+    return df
+#pregunta_12()
 
 def pregunta_13():
     """
@@ -217,4 +269,9 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    df1 = pd.DataFrame(tbl0)
+    df2 = pd.DataFrame(tbl2)
+    df = pd.merge(df1, df2, on="_c0")
+    
+    return df[["_c1","_c5b"]].groupby('_c1').sum()
+print(pregunta_13())
